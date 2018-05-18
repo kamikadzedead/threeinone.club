@@ -51,7 +51,6 @@ module.exports = function generate(type) {
     return ''
   }
 
-  // Until 2019-04-09T21:15:00.000Z
   const records = data
     .sort()
   let rows = []
@@ -80,11 +79,13 @@ module.exports = function generate(type) {
     }
     else {
       const a = record.split('~')
+      const time = new Date(parseInt(a[0], radix) * minute)
+      const timestamp = isFinite(time.getTime()) ? time.toISOString() : 'Неизвестно'
       const o = {
         identifier: parseInt(a[4], radix),
         customer: a[2],
         paymentMethod: systems[a[3]],
-        scheduledPaymentDate: new Date(parseInt(a[0], radix) * minute).toISOString()
+        scheduledPaymentDate: timestamp
           .replace(/20(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+).000Z/, '$1.$2.$3 $4:$5'),
         totalPaymentDue: a[1],
         paymentMethodId: a[6] || ''
