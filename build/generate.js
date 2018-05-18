@@ -4,7 +4,7 @@ const radix = 36
 const minute = 60 * 1000
 
 function read(filename) {
-  return fs.readFileSync(__dirname + '/..' + filename, {encoding: 'utf8'})
+  return fs.readFileSync(__dirname + '/..' + filename, { encoding: 'utf8' })
 }
 
 module.exports = function generate(type) {
@@ -31,12 +31,16 @@ module.exports = function generate(type) {
     'Яндекс.Деньги'
   ]
 
+  const size = 500
+  let emptyPage = 0
+
   function pageNumber(i) {
-    return Math.floor(i / size) + 1
+    return (Math.floor(i / size) + 1) - emptyPage
   }
 
-  const size = 500
-  const pages = pageNumber(data.length - 1)
+  function getPages() {
+    return pageNumber(data.length - 1);
+  }
 
   function pageFileName(n) {
     const string = 1 === n ? 'index' : ('0000' + n).slice(-5)
@@ -44,7 +48,7 @@ module.exports = function generate(type) {
   }
 
   function pageAnchor(n, condition = true) {
-    if (condition && n >= 1 && n <= pages) {
+    if (condition && n >= 1 && n <= getPages()) {
       const filename = pageFileName(n)
       return `<a href="${filename}">${n}</a>`
     }
@@ -61,12 +65,16 @@ module.exports = function generate(type) {
       continue
     }
     if ((0 === (i + 1) % size) || last === i) {
-      const body = rows.join('\n')
+      if (rows.length === 0) {
+        emptyPage++
+        continue
+      }
       const n = pageNumber(i)
       const left = n - 1
       const right = n + 1
       const firstAnchor = pageAnchor(1, left > 1)
-      const lastAnchor = pageAnchor(pages, right < pages)
+      const lastAnchor = pageAnchor(getPages(), right < getPages())
+      const body = rows.join('\n')
       fs.writeFileSync(target + '/' + pageFileName(n),
         template
           .replace('{first}', firstAnchor ? firstAnchor + ' ... ' : '')
@@ -79,6 +87,9 @@ module.exports = function generate(type) {
     }
     else {
       const a = record.split('~')
+      if (undefined === a[4]) {
+        continue
+      }
       const time = new Date(parseInt(a[0], radix) * minute)
       const timestamp = isFinite(time.getTime()) ? time.toISOString() : 'Неизвестно'
       const o = {
