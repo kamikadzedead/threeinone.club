@@ -20,7 +20,7 @@ module.exports = function generate(type) {
   }
   const title = 'refill' === type ? 'Пополнения' : 'Выплаты'
   const data = read(`/data/${type}.txt`)
-    .split(/\s+/)
+.split(/\s*\n\s*/)
   const template = read('/build/template.html')
     .replace('{title}', title)
     .replace('{title}', title)
@@ -55,27 +55,29 @@ module.exports = function generate(type) {
     return ''
   }
 
+  const files = []
   const records = data
     .sort()
   let rows = []
   const last = records.length - 1
   for (let i = 0; i <= last; i++) {
-    const record = records[i]
+    const record = records[i].replace(/\s+/g, '')
     if (record.length <= 0) {
       continue
     }
     if ((0 === (i + 1) % size) || last === i) {
-      if (rows.length === 0) {
-        emptyPage++
-        continue
-      }
+      // if (rows.length === 0) {
+      //   emptyPage++
+      //   continue
+      // }
       const n = pageNumber(i)
       const left = n - 1
       const right = n + 1
       const firstAnchor = pageAnchor(1, left > 1)
       const lastAnchor = pageAnchor(getPages(), right < getPages())
       const body = rows.join('\n')
-      fs.writeFileSync(target + '/' + pageFileName(n),
+      const filename = pageFileName(n)
+      fs.writeFileSync(target + '/' + filename,
         template
           .replace('{first}', firstAnchor ? firstAnchor + ' ... ' : '')
           .replace('{left}', pageAnchor(left))
@@ -84,12 +86,13 @@ module.exports = function generate(type) {
           .replace('{last}', lastAnchor ? ' ... ' + lastAnchor : '')
           .replace('{body}', `\n${body}\n`))
       rows = []
+      files.push(`/${type}/${filename}`)
     }
     else {
       const a = record.split('~')
-      if (undefined === a[4]) {
-        continue
-      }
+      // if (undefined === a[4]) {
+      //   continue
+      // }
       const time = new Date(parseInt(a[0], radix) * minute)
       const timestamp = isFinite(time.getTime()) ? time.toISOString() : 'Неизвестно'
       const o = {
@@ -109,4 +112,5 @@ module.exports = function generate(type) {
       rows.push(`<tr>${string}</tr>`)
     }
   }
+  return files
 }
