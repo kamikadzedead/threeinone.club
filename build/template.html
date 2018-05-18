@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Three in One: {title}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha256-Md8eaeo67OiouuXAi8t/Xpd8t2+IaJezATVTWbZqSOw="
+        crossorigin="anonymous" />
+</head>
+
+<body>
+    <div class="container">
+        <h1>{title} <a href="https://www.threeinone.club/">threeinone.club</a></h1>
+        <div id="pagination">
+            Страницы: {first} {left} {page} {right} {last}
+        </div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Пользователь</th>
+                    <th>Время</th>
+                    <th>Платежная система</th>
+                    <th>Сумма</th>
+                    <th>Кошелёк</th>
+                </tr>
+            </thead>
+            <tbody>{body}</tbody>
+        </table>
+    </div>
+</body>
+
+</html>
