@@ -82,6 +82,7 @@ module.exports = function generate(type) {
           .replace('{first}', firstAnchor ? firstAnchor + ' ... ' : '')
           .replace('{left}', pageAnchor(left))
           .replace('{page}', n)
+          .replace('{page}', n)
           .replace('{right}', pageAnchor(right))
           .replace('{last}', lastAnchor ? ' ... ' + lastAnchor : '')
           .replace('{body}', `\n${body}\n`))
@@ -97,10 +98,10 @@ module.exports = function generate(type) {
       const timestamp = isFinite(time.getTime()) ? time.toISOString() : 'Неизвестно'
       const o = {
         identifier: parseInt(a[4], radix),
-        customer: a[2],
+        customer: a[2] || '',
         scheduledPaymentDate: timestamp
           .replace(/20(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+).000Z/, '$1.$2.$3 $4:$5'),
-        paymentMethod: systems[a[3]],
+        paymentMethod: systems[a[3]] || '',
         totalPaymentDue: (+a[1]).toFixed(2),
         paymentMethodId: a[6] || ''
       }
