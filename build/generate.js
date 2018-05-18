@@ -95,10 +95,10 @@ module.exports = function generate(type) {
       const o = {
         identifier: parseInt(a[4], radix),
         customer: a[2],
-        paymentMethod: systems[a[3]],
         scheduledPaymentDate: timestamp
           .replace(/20(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+).000Z/, '$1.$2.$3 $4:$5'),
-        totalPaymentDue: a[1],
+        paymentMethod: systems[a[3]],
+        totalPaymentDue: (+a[1]).toFixed(2),
         paymentMethodId: a[6] || ''
       }
       const row = []
